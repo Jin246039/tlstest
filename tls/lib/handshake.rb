@@ -2,155 +2,272 @@
 # -*- coding: utf-8 -*-
 
 module TLS
-	module Handshake
-		HandshakeType = {
-			'hello_request' => 0,
-			'client_hello' => 1,
-			'server_hello' => 2,
-			'certificate' => 11,
-			'server_key_exchange' => 12,
-			'certificate_request' => 13,
-			'server_hello_done' => 14,
-			'certificate_verify' => 15,
-			'client_key_exchange' => 16,
-			'finished' => 20,
-		}
+  module Handshake
+    class HandshakeType
+      def HandshakeType.hello_request
+        0
+      end
+  
+      def HandshakeTYpe.client_hello
+        1
+      end
+  
+      def HandshakeType.server_hello
+        2
+      end
+  
+      def HandshakeType.certificate
+        11
+      end
+  
+      def HandshakeType.server_key_exchange
+        12
+      end
+  
+      def HandshakeType.certificate_request
+        13
+      end
+  
+      def HandshakeType.server_hello_done
+        14
+      end
+  
+      def HandshakeType.certificate_verify
+        15
+      end
+  
+      def HandshakeType.client_key_exchange
+        16
+      end
+  
+      def HandshakeType.finished
+        20
+      end
 
-		CompressionMethod = {
-			'null' => 0,
-		}
+      def [](msg_type)
+        handshake_msg_type = {
+          0   => 'hello_request',
+          1   => 'client_hello',
+          2   => 'server_hello',
+          11  => 'certificate',
+          12  => 'server_key_exchange',
+          13  => 'certificate_request',
+          14  => 'server_hello_done',
+          15  => 'certificate_verify',
+          16  => 'client_key_exchange',
+          20  => 'finished',
+        }.freeze
+        handshake_msg_type[msg_type]
+      end
+    end
 
-		ExtensionType = {
-			'signature_algorithms' => 13,
-		}
+    class CompressionMethod
+      def CompressionMethod.null
+        0
+      end
+    end
 
-		HashAlgorithm = {
-			'none' => 0,
-			'md5' => 1,
-			'sha1' => 2,
-			'sha224' => 3,
-			'sha256' => 4,
-			'sha384' => 5,
-			'sha512' => 6,
-		}
+    class ExtensionType
+      def ExtensionType.signature_algorithms
+        13
+      end
+    end
 
-		SignatureAlgorithm = {
-			'anonymous' => 0,
-			'rsa' => 1,
-			'dsa' => 2,
-			'ecdsa' => 3,
-		}
+    class HashAlgorithm
+      def HashAlgorithm.none
+        0
+      end
 
-		KeyExchangeAlgorithm = {
-			'dhe_dss' => 0,
-			'dhe_rsa' => 1,
-			'dh_anon' => 2,
-			'rsa' => 3,
-			'dh_dss' => 4,
-			'dh_rsa' => 5,
-		}
+      def HashAlgorithm.md5
+        1
+      end
 
-		ClientCertificateType = {
-			'rsa_sign' => 1,
-			'dss_sign' => 2,
-			'rsa_fixed' => 3,
-			'dss_fixed' => 4,
-			'rsa_ephemeral_dh_RESERVER' => 5,
-			'dss_ephemeral_dh_RESERVED' => 6,
-			'fortezza_dms_RESERVED' => 20
-		}
+      def HashAlgorithm.sha1
+        2
+      end
 
-		class Handshake
-			attr_accessor :msg_type
-			attr_accessor :length
-			attr_accessor :body
+      def HashAlgorithm.sha224
+        3
+      end
 
-			def initialize()
-				@msg_type = nil
-				@length = nil
-				@body = nil
-			end
+      def HashAlgotithm.sha256
+        4
+      end
 
-			def to_s
-				string = "\t====[ Handshake ]====\n" \
-					     + "\tmsg_type : #{@msg_type}\n" \
-					     + "\tlength   : #{@length}"
-			end
+      def HashAlgorithm.sha384
+        5
+      end
 
-			def to_raw
-				"\xbb\xbb\xbb" + @body.to_raw
-			end
+      def HashAlgorithm.sha512
+        6
+      end
+    end
 
-			def |(body = nil)
-				@body = body
-				return self
-			end
-		end
+    class SignatureAlgorithm
+      def SignatureAlgotithm.anonymous
+        0
+      end
 
-		class Random
-			attr_accessor :gmt_unix_time
-			attr_accessor :random_bytes
-		end
+      def SignatureAlgotithm.rsa
+        1
+      end
 
-		class ClientHello
-			attr_accessor :client_version
-			attr_accessor :random
-			attr_accessor :session_id
-			attr_accessor :cipher_suites
-			attr_accessor :compression_methods
-			attr_accessor :extensions_present
-			attr_accessor :extensions
+      def SignatureAlgotithm.dsa
+        2
+      end
 
-			def initialize
-				@client_version = 0
-			end
+      def SignatureAlgotithm.ecdsa
+        3
+      end
+    end
 
-			def to_raw
-				data = "\xcc\xcc"
-			end
-		end
+    class KeyExchangeAlgorithm
+      def KeyExchangeAlgorithm.dhe_dss
+        0
+      end
 
-		class ServerHello
-			attr_accessor :server_version
-			attr_accessor :random
-			attr_accessor :session_id
-			attr_accessor :cipher_suite
-			attr_accessor :compression_method
-			attr_accessor :extensions_present
-			attr_accessor :extensions
-		end
+      def KeyExchangeAlgorithm.dhe_rsa
+        1
+      end
 
-		class SignatureAndHashAlgorithm
-			attr_accessor :Hash
-			attr_accessor :signature
-		end
+      def KeyExchangeAlgorithm.dh_anon
+        2
+      end
 
-		class Certificate
-			attr_accessor :certificate_list
-		end
+      def KeyExchangeAlgorithm.rsa
+        3
+      end
 
-		class ServerDHParams
-			attr_accessor :dh_p
-			attr_accessor :dh_g
-			attr_accessor :dh_Ys
-		end
+      def KeyExchangeAlgorithm.dh_dss
+        4
+      end
 
-		class ServerKeyExchange
-			attr_accessor :params
-		end
+      def KeyExchangeAlgorithm.dh_rsa
+        5
+      end
+    end
 
-		class CertificateRequest
-			attr_accessor :certificate_types
-			attr_accessor :supported_signature_algorithms
-			attr_accessor :certificate_authorities
-		end
+    class ClientCertificateType
+      def ClientCertificateType.rsa_sign
+        1
+      end
 
-		class ClientKeyExchange
-			attr_accessor :exchange_keys
-		end
+      def ClientCertificateType.dss_sign
+        2
+      end
 
-		class Finished
-			attr_accessor :verify_data
-		end
-	end
+      def ClientCertificateType.rsa_fixed
+        3
+      end
+
+      def ClientCertificateType.dss_fixed
+        4
+      end
+
+      def ClientCertificateType.rsa_ephemeral_dh_RESERVER
+        5
+      end
+
+      def ClientCertificateType.dss_ephemeral_dh_RESERVED
+        6
+      end
+
+      def ClientCertificateType.fortezza_dms_RESERVED
+        20
+      end
+    end
+
+    class Handshake
+      attr_accessor :msg_type
+      attr_accessor :length
+      attr_accessor :body
+
+      def initialize()
+        @msg_type = nil
+        @length = nil
+        @body = nil
+      end
+
+      def to_s
+        string = "\t====[ Handshake ]====\n" \
+               + "\tmsg_type : #{@msg_type}\n" \
+               + "\tlength   : #{@length}"
+      end
+
+      def to_raw
+        "\xbb\xbb\xbb" + @body.to_raw
+      end
+
+      def |(body = nil)
+        @body = body
+        return self
+      end
+    end
+
+    class Random
+      attr_accessor :gmt_unix_time
+      attr_accessor :random_bytes
+    end
+
+    class ClientHello
+      attr_accessor :client_version
+      attr_accessor :random
+      attr_accessor :session_id
+      attr_accessor :cipher_suites
+      attr_accessor :compression_methods
+      attr_accessor :extensions_present
+      attr_accessor :extensions
+
+      def initialize
+        @client_version = 0
+      end
+
+      def to_raw
+        data = "\xcc\xcc"
+      end
+    end
+
+    class ServerHello
+      attr_accessor :server_version
+      attr_accessor :random
+      attr_accessor :session_id
+      attr_accessor :cipher_suite
+      attr_accessor :compression_method
+      attr_accessor :extensions_present
+      attr_accessor :extensions
+    end
+
+    class SignatureAndHashAlgorithm
+      attr_accessor :Hash
+      attr_accessor :signature
+    end
+
+    class Certificate
+      attr_accessor :certificate_list
+    end
+
+    class ServerDHParams
+      attr_accessor :dh_p
+      attr_accessor :dh_g
+      attr_accessor :dh_Ys
+    end
+
+    class ServerKeyExchange
+      attr_accessor :params
+    end
+
+    class CertificateRequest
+      attr_accessor :certificate_types
+      attr_accessor :supported_signature_algorithms
+      attr_accessor :certificate_authorities
+    end
+
+    class ClientKeyExchange
+      attr_accessor :exchange_keys
+    end
+
+    class Finished
+      attr_accessor :verify_data
+    end
+  end
 end
