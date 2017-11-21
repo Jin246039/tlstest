@@ -8,7 +8,7 @@ module TLS
         0
       end
   
-      def HandshakeTYpe.client_hello
+      def HandshakeType.client_hello
         1
       end
   
@@ -44,7 +44,7 @@ module TLS
         20
       end
 
-      def [](msg_type)
+      def HandshakeType.[](msg_type)
         handshake_msg_type = {
           0   => 'hello_request',
           1   => 'client_hello',
@@ -90,7 +90,7 @@ module TLS
         3
       end
 
-      def HashAlgotithm.sha256
+      def HashAlgorithm.sha256
         4
       end
 
@@ -104,19 +104,20 @@ module TLS
     end
 
     class SignatureAlgorithm
-      def SignatureAlgotithm.anonymous
+
+      def SignatureAlgorithm.anonymous
         0
       end
 
-      def SignatureAlgotithm.rsa
+      def SignatureAlgorithm.rsa
         1
       end
 
-      def SignatureAlgotithm.dsa
+      def SignatureAlgorithm.dsa
         2
       end
 
-      def SignatureAlgotithm.ecdsa
+      def SignatureAlgorithm.ecdsa
         3
       end
     end
@@ -189,9 +190,10 @@ module TLS
       end
 
       def to_s
-        string = "\t====[ Handshake ]====\n" \
-               + "\tmsg_type : #{@msg_type}\n" \
-               + "\tlength   : #{@length}"
+        string = "\n\t====[ Handshake ]====\n" \
+               + "\tmsg_type : #{HandshakeType[@msg_type]}\n" \
+               + "\tlength   : #{@length}\n" \
+               + "\tbody     : #{@body.to_s}\n"
       end
 
       def to_raw
@@ -220,6 +222,16 @@ module TLS
 
       def initialize
         @client_version = 0
+      end
+
+      def to_s
+        string_version = ProtocolVersion[@client_version]
+        string = "\n\t\t====[ ClientHello ]====\n" \
+               + "\t\tclient_version      : #{string_version}\n" \
+               + "\t\trandom              : #{@random}\n" \
+               + "\t\tsession_id          : #{@session_id}\n" \
+               + "\t\tcipher_suites       : #{@cipher_suites}\n" \
+               + "\t\tcompression_methods : #{@compression_methods}\n" \
       end
 
       def to_raw

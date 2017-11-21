@@ -26,7 +26,7 @@ module TLS
         24
       end
 
-      def [](type)
+      def ContentType.[](type)
         record_content_type = {
           20 => 'change_cipher_spec',
           21 => 'alert',
@@ -51,13 +51,15 @@ module TLS
           :length => 0,
           :fragment => '',
         }.freeze
+        options = options.merge!(options_default)
       end
 
       def to_s
         string = "====[ Record ]====\n" \
-               + "type    : #{ContentType.key(@type)}\n" \
-               + "version : #{@version.to_s}\n" \
-               + "length  : #{@length}"
+               + "type    : #{ContentType[@type]}\n" \
+               + "version : #{ProtocolVersion[@version]}\n" \
+               + "length  : #{@length}\n" \
+               + "fragment: #{@fragment.to_s}\n"
       end
 
       def |(payload=nil)
