@@ -200,7 +200,7 @@ module TLS
         "\xbb\xbb\xbb" + @body.to_raw
       end
 
-      def |(body = nil)
+      def <<(body = nil)
         @body = body
         return self
       end

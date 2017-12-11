@@ -62,7 +62,7 @@ module TLS
                + "fragment: #{@fragment.to_s}\n"
       end
 
-      def |(payload=nil)
+      def <<(payload=nil)
         @fragment = payload
         return self
       end
