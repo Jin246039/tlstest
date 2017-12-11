@@ -2,9 +2,14 @@
 # -*- coding: utf-8 -*-
 
 # This file defines the record layer of the TLS protocol
+require_relative "change_cipher_spec"
+require_relative "alert"
+require_relative "application_data"
 
 module TLS
   module Record
+    include TLS::Handshake
+
     class ContentType
       def ContentType.change_cipher_spec
         20
@@ -52,23 +57,46 @@ module TLS
           :fragment => '',
         }.freeze
         options = options.merge!(options_default)
+
+        @type = options[:type]
+        @version = options[:version]
+        @length = options[:length]
+        @fragment = options[:fragment]
       end
 
-      def to_s
+      def show
         string = "====[ Record ]====\n" \
                + "type    : #{ContentType[@type]}\n" \
                + "version : #{ProtocolVersion[@version]}\n" \
                + "length  : #{@length}\n" \
-               + "fragment: #{@fragment.to_s}\n"
+               + "fragment: #{@fragment.show}\n"
       end
 
-      def <<(payload=nil)
-        @fragment = payload
-        return self
+      def <<(fragment = nil)
+        if fragment.instance_of?(Handshake::ChangeCipherSpec)
+          @type = ContentType.change_cipher_spec
+          @fragment = fragment
+        elsif fragment.instance_of?(Handshake::Alert)
+          @type = ContentType.alert
+          @fragment = fragment
+        elsif fragment.instance_of?(Handshake::Handshake)
+          @type = ContentType.handshake
+          @fragment = fragment
+        elsif fragment.instance_of?(Handshake::ApplicationData)
+          @type = ContentType.application_data
+          @fragment = fragment
+        elsif @fragment == ''
+          @fragment = fragment
+        else
+          @fragment << fragment
+        end
+
+        @length = @fragment.length
       end
 
-      def to_raw
-        bytes = "\xaa\xaa" + @fragment.to_raw
+      def to_s
+        raw = @type.chr + @version.to_s
+        raw += ["%04x" % @length].pack('H*') + @fragment.to_s
       end
     end
     class GenericStreamCipher

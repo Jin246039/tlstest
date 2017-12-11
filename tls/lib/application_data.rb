@@ -3,12 +3,7 @@
 
 module TLS
 	module Handshake
-		class ChangeCipherSpec
-			attr_accessor :type
-
-			def initialize
-				nil
-			end
+		class ApplicationData
 		end
 	end
 end

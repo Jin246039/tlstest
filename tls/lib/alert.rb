@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 module TLS
-	module Alert
+	module Handshake
 		AlertLevel = {
 			'warning' => 1,
 			'fatal'   => 2,

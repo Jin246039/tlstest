@@ -10,7 +10,7 @@ module TLS
 			@minor = minor_version
 		end
 
-		def to_s
+		def show
 			version = (@major << 8) + @minor
 			case version
 			when 0x0301
@@ -22,6 +22,10 @@ module TLS
 			else
 				"unknown"
 			end
+		end
+
+		def to_s
+			@major.chr + @minor.chr
 		end
 
 		def ProtocolVersion.[](version)

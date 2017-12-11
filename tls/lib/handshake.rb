@@ -184,25 +184,29 @@ module TLS
       attr_accessor :body
 
       def initialize()
-        @msg_type = nil
-        @length = nil
-        @body = nil
+        @msg_type = 0
+        @length = 0
+        @body = ''
       end
 
-      def to_s
+      def show
         string = "\n\t====[ Handshake ]====\n" \
                + "\tmsg_type : #{HandshakeType[@msg_type]}\n" \
                + "\tlength   : #{@length}\n" \
                + "\tbody     : #{@body.to_s}\n"
       end
 
-      def to_raw
-        "\xbb\xbb\xbb" + @body.to_raw
+      def to_s
+        @msg_type.chr + ["%06x" % @length].pack('H*') + @body.to_s
       end
 
       def <<(body = nil)
         @body = body
-        return self
+        @length = @body.chr.length
+      end
+
+      def length
+        @length
       end
     end
 
@@ -224,7 +228,7 @@ module TLS
         @client_version = 0
       end
 
-      def to_s
+      def show
         string_version = ProtocolVersion[@client_version]
         string = "\n\t\t====[ ClientHello ]====\n" \
                + "\t\tclient_version      : #{string_version}\n" \
@@ -234,7 +238,7 @@ module TLS
                + "\t\tcompression_methods : #{@compression_methods}\n" \
       end
 
-      def to_raw
+      def to_s
         data = "\xcc\xcc"
       end
     end
