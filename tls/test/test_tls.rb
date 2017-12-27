@@ -7,9 +7,7 @@ require_relative "../lib/tls_globals"
 
 puts TLS::Record::ContentType.handshake
 puts TLS::Record::ContentType[20]
-record = TLS::Record::TLSPlaintext.new(:version => TLS::ProtocolVersion.version_1_1)
-handshake = TLS::Handshake::Handshake.new()
-client_hello = TLS::Handshake::ClientHello.new()
-package = record << handshake
-puts record.show
-puts record.to_s
+record = TLS::Record::Record.new() \
+						<< TLS::Handshake::Handshake.new()
+puts record.class
+puts TLS::Handshake::Handshake.new().class
